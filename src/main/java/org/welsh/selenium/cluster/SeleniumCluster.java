@@ -14,6 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.welsh.selenium.cluster.cmd.Constants;
 import org.welsh.selenium.cluster.domain.SeleniumHub;
 import org.welsh.selenium.cluster.exception.NoServerAvailableException;
+import org.welsh.selenium.cluster.service.SeleniumHubService;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
@@ -42,11 +43,20 @@ public class SeleniumCluster {
 	 * Base URL of Browser to Start With
 	 */
 	private String browserURL;
+	/**
+	 * Service to manipulate Hubs
+	 */
+	private SeleniumHubService seleniumHubService;
 
 	/**
 	 * List of Available SeleniumHub objects
 	 */
-	private List<SeleniumHub> seleniumHubs = new ArrayList<SeleniumHub>();
+	private List<SeleniumHub> seleniumHubs;
+
+	private SeleniumCluster() {
+		seleniumHubs = new ArrayList<SeleniumHub>();
+		seleniumHubService  = new SeleniumHubService();
+	}
 
 	/**
 	 * Constructor to create SeleniumCluster with an empty list of
@@ -55,7 +65,9 @@ public class SeleniumCluster {
 	 * @param browserStartCommand
 	 * @param browserURL
 	 */
-	public SeleniumCluster(String browserStartCommand, String browserURL) {		
+	public SeleniumCluster(String browserStartCommand, String browserURL) {
+		this();
+
 		this.browserStartCommand = browserStartCommand;
 		this.browserURL = browserURL;
 	}
@@ -69,6 +81,8 @@ public class SeleniumCluster {
 	 * @param seleniumHubs
 	 */
 	public SeleniumCluster(String browserStartCommand, String browserURL, List<SeleniumHub> seleniumHubs) {
+		this();
+
 		this.browserStartCommand = browserStartCommand;
 		this.browserURL = browserURL;
 		this.seleniumHubs = seleniumHubs;
@@ -82,33 +96,16 @@ public class SeleniumCluster {
 	 * @return com.thoughtworks.selenium.Selenium of First Available Selenium Hub
 	 * @throws NoServerAvailableException Thrown if no SeleniumHub is available
 	 */
-	public Selenium getAvailableSelenium() throws NoServerAvailableException {
+	public Selenium getFirstAvailableSelenium() throws NoServerAvailableException {
 		SeleniumHub availableHub = null;
-		HttpClient httpclient = new DefaultHttpClient();
-		
+
 		// Loop through Selenium Hubs and find available
 		for (SeleniumHub seleniumHub : seleniumHubs) {
 			log.fine("Checking Selenium Hub: " + seleniumHub.getServerHost() + ":" + seleniumHub.getServerPort());
 			
 			// Stop at first Hub
-			if(availableHub == null) {
-				HttpGet httpGet = new HttpGet("http://" + seleniumHub.getServerHost() + ":" 
-						+ seleniumHub.getServerPort() + Constants.GRID_CONSOLE_PAGE);
-				
-				try {
-					HttpResponse httpResponse = httpclient.execute(httpGet);
-					
-					log.fine("Response Code: " + httpResponse.getStatusLine().getStatusCode());
-					
-					// Only Accept 200 Response Codes
-					if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-						availableHub = seleniumHub;
-					}
-				} catch (ClientProtocolException e) {
-					log.fine(e.getLocalizedMessage());
-				} catch (IOException e) {
-					log.fine(e.getLocalizedMessage());
-				}			
+			if(availableHub == null && seleniumHubService.matchesHttpResponseCode(seleniumHub, HttpStatus.SC_OK)) {
+				availableHub = seleniumHub;
 			}
 		}
 			
@@ -121,6 +118,19 @@ public class SeleniumCluster {
 		log.info("Available Hub: " + availableHub.getServerHost() + ":" + availableHub.getServerPort());
 		
 		return new DefaultSelenium(availableHub.getServerHost(), availableHub.getServerPort(), browserStartCommand, browserURL);
+	}
+
+
+	/**
+	 * Will return com.thoughtworks.selenium.Selenium based off the set
+	 * load balancing rules. Preferred method to get Selenium Object. If no
+	 * SeleniumHub instances are available throws NoServerAvailableException.
+	 *
+	 * @return com.thoughtworks.selenium.Selenium of First Available Selenium Hub
+	 * @throws NoServerAvailableException Thrown if no SeleniumHub is available
+	 */
+	public Selenium getAvailableSelenium() throws NoServerAvailableException {
+		return getFirstAvailableSelenium();
 	}
 
 	/**
