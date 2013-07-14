@@ -36,7 +36,24 @@ I am working on getting this into Maven Central.
 Usage
 ---------
 
-And then you can Initialize the SeleniumCluster Object:
+Hub Setup
+=========
+
+You will need configure your Hub to use the Custom Servlet that can provide advanced load balancing functionality. To do so
+download the selenium-cluster-X.X.X.jar file and place it beside your selenium-server-standalone-X.X.X.jar file and run
+the following commands for your specific environment:
+
+Linux / Max
+    java -cp selenium-server-standalone-2.33.0.jar;selenium-cluster-1.1.0.jar org.openqa.grid.selenium.GridLauncher -role hub -servlets org.welsh.selenium.cluster.servlet.SeleniumClusterHubStatus
+
+Windows
+    java -cp selenium-server-standalone-2.33.0.jar:selenium-cluster-1.1.0.jar org.openqa.grid.selenium.GridLauncher -role hub -servlets org.welsh.selenium.cluster.servlet.SeleniumClusterHubStatus
+
+Code
+=========
+
+#### Basic
+You can Initialize the SeleniumCluster Object:
 
     SeleniumCluster seleniumCluster = new SeleniumCluster(BROWSER, URL);
 
@@ -57,6 +74,19 @@ At which point you can decide what you wish to do regarding the `org.welsh.selen
 
 1. Catch It
 2. Throw It.
+
+#### Advanced
+If you choose so, after you Initialize the SeleniumCluster Object:
+
+    SeleniumCluster seleniumCluster = new SeleniumCluster(BROWSER, URL);
+
+You can configure it you use advanced load balancing that factors in the Queue and % of Used Sessions by setting the 
+`advancedLoadBalance` to `true`. Example:
+
+    seleniumCluster.setAdvancedLoadBalance(true);
+    
+This <b>REQUIRES</b> that you follow the Hub Setup defined above so the `org.welsh.selenium.cluster.servlet.SeleniumClusterHubStatus`
+is available. If you have `advancedLoadBalance` to `true` and the servlet is not available it will default to first available.
 
 Change Log
 ---------
