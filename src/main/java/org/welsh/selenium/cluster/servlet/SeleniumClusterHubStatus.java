@@ -12,7 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.bouncycastle.pqc.math.linearalgebra.GoppaCode.MaMaPe;
 import org.openqa.grid.internal.Registry;
 import org.openqa.grid.internal.RemoteProxy;
 import org.openqa.grid.web.servlet.RegistryBasedServlet;
@@ -119,7 +118,7 @@ public class SeleniumClusterHubStatus extends RegistryBasedServlet {
 	    	
 			in = new ByteArrayInputStream(serializer.writeToString(rootElement).getBytes("UTF-8"));
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		log.severe("Error Creating XML: " + e.getLocalizedMessage());
     	}
     	
         try {
