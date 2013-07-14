@@ -59,7 +59,7 @@ public class SeleniumClusterHubStatus extends RegistryBasedServlet {
      * @throws TransformerConfigurationException 
      */
     protected void process(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	InputStream in = new ByteArrayInputStream("Error Generating XML".getBytes("UTF-8"));
+    	InputStream in = new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-16\"?><error>Error Generating XML</error>".getBytes("UTF-16"));
     	
     	try {
 	    	Integer currentSessionsInt = getRegistry().getActiveSessions().size();
@@ -116,7 +116,7 @@ public class SeleniumClusterHubStatus extends RegistryBasedServlet {
 			DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
 			LSSerializer serializer = domImplLS.createLSSerializer();
 	    	
-			in = new ByteArrayInputStream(serializer.writeToString(rootElement).getBytes("UTF-8"));
+			in = new ByteArrayInputStream(serializer.writeToString(rootElement).getBytes("utf-16"));
     	} catch (Exception e) {
     		log.severe("Error Creating XML: " + e.getLocalizedMessage());
     	}
@@ -124,6 +124,7 @@ public class SeleniumClusterHubStatus extends RegistryBasedServlet {
         try {
            ByteStreams.copy(in, response.getOutputStream());
         } finally {
+           response.setContentType("application/xml; charset=utf-16");
            in.close();
            response.getOutputStream().close();
         }
