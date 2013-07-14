@@ -10,6 +10,11 @@ public class SeleniumHub {
 
 	private String serverHost;
 	private int serverPort;
+	
+	private boolean xmlParsed = false;
+	
+	private Double percentageUsed;
+	private Integer testsQueued;
 
 	/**
 	 * Default Constructor requiring Server Host and Server Port.
@@ -59,11 +64,57 @@ public class SeleniumHub {
 	public void setServerPort(int serverPort) {
 		this.serverPort = serverPort;
 	}
+	
+	/**
+	 * Method to set Percentage Used of Hub from XML. Example: 20.0
+	 * 
+	 * @return Double containing percentage used
+	 */
+	public Double getPercentageUsed() {
+		return percentageUsed;
+	}
+
+	/**
+	 * Method to get percentage used of Hub from XML
+	 * 
+	 * @param percentageUsed Double containing percentage used
+	 */
+	public void setPercentageUsed(Double percentageUsed) {
+		this.percentageUsed = percentageUsed;
+	}
+
+	/**
+	 * Method to get number of tests queued for Hub from XML
+	 * 
+	 * @return Integer containing number of tests queued
+	 */
+	public Integer getTestsQueued() {
+		return testsQueued;
+	}
+
+	/**
+	 * Method to set number of tests queued for Hub from XML
+	 * 
+	 * @param testsQueued Integer containing number of tests queued
+	 */
+	public void setTestsQueued(Integer testsQueued) {
+		this.testsQueued = testsQueued;
+	}
+	
+
+	public boolean isXmlParsed() {
+		return xmlParsed;
+	}
+
+	public void setXmlParsed(boolean xmlParsed) {
+		this.xmlParsed = xmlParsed;
+	}
 
 	@Override
 	public String toString() {
 		return "SeleniumHub [serverHost=" + serverHost + ", serverPort="
-				+ serverPort + "]";
+				+ serverPort + ", xmlParsed=" + xmlParsed + ", percentageUsed="
+				+ percentageUsed + ", testsQueued=" + testsQueued + "]";
 	}
 
 	@Override
