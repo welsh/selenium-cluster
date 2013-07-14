@@ -11,4 +11,6 @@ public class Constants {
 	 * Absolute context to the Grid Console Page
 	 */
 	public static final String GRID_CONSOLE_PAGE = "/grid/console";
+	
+	public static final String GRID_HUB_STATUS_PAGE = "/grid/admin/SeleniumClusterHubStatus";
 }

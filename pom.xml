@@ -4,18 +4,26 @@
 
 	<groupId>org.welsh.selenium</groupId>
 	<artifactId>selenium-cluster</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Selenium Cluster</name>
-	<description>A Utility to run utilize a cluster of selenium hubs rather than code individually for just one
-</description>
+	<description>A Utility to run utilize a cluster of selenium hubs rather than code individually for just one</description>
+	
+	<properties>
+		<selenium.version>2.33.0</selenium.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.33.0</version>
+			<version>${selenium.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>${selenium.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
